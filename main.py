@@ -28,11 +28,13 @@ async def help(ctx):
     /help - Muestra esta lista de comandos
     /random_meme - Envía un meme aleatorio desde la carpeta "images"
     /get_duck - Envía una imagen aleatoria de un pato
+    /open_meme - Envía un meme por probabilidad de programación
     '''
     await ctx.send(help_text)
 
 @bot.command()
 async def random_meme(ctx):
+    # Vamos a obtener la ruta de la carpeta "images" y luego listaremos todos los archivos en esa carpeta.
     image_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'images')
     fl = os.listdir(image_dir)
     choice = random.choice(fl)
@@ -41,6 +43,22 @@ async def random_meme(ctx):
         picture = discord.File(f)
     # A continuación, podemos enviar este archivo como parámetro.
     await ctx.send(file=picture)
+
+@bot.command()
+async def open_meme(ctx):
+    await ctx.send("¡Veamos qué meme aleatorio podemos encontrar!")
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    # 70% de probabilidad de elegir programación y 30% de elegir "otros"
+    categoria = random.choices(
+        ["programacion", "otros"],
+        weights=[60, 40],
+        k=1
+    )[0]
+    category_dir = os.path.join(base_dir, "images", categoria)
+    imagenes = os.listdir(category_dir)
+    imagen = random.choice(imagenes)
+    image_path = os.path.join(category_dir, imagen)
+    await ctx.send(file=discord.File(image_path))
 
 @bot.command()
 async def get_duck(ctx):
